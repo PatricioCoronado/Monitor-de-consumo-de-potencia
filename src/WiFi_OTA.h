@@ -8,8 +8,8 @@
  * wifi client
  **********************************************/
 #ifdef pueblo
-  const char* ssid = "FX-991SP";
-  const char* password = "Doniga_93"; 
+  const char* ssid = "otra_SSID";
+  const char* password = "otra_password_wifi"; 
 #else
   const char* ssid = "tu_SSID";
   const char* password = "tu_password_WiFi"; 
