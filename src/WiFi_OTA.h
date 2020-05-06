@@ -8,11 +8,11 @@
  * wifi client
  **********************************************/
 #ifdef pueblo
-  const char* ssid = "FX-991SP";
-  const char* password = "Doniga_93"; 
+  const char* ssid = "SSID2";
+  const char* password = "password2"; 
 #else
-  const char* ssid = "router_no_encontrado";
-  const char* password = "RoloTomasi8086"; 
+  const char* ssid = "SSID1";
+  const char* password = "pasword1"; 
 #endif
 
 String IPasignada ="255.255.255.255";
