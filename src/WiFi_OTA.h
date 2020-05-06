@@ -22,7 +22,7 @@ String IPasignada ="255.255.255.255";
  **********************************************/
 #define HOSTNAME "Monitir_de_red_01"
 //the password for OTA upgrade, can set it in any char you want
-#define PASSWORD "Enrique8" 
+#define PASSWORD "passwordOTA" 
 /*************************************************
  * Por si se quiere usar una IP estática  
  *************************************************/
