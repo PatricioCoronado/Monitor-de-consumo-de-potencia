@@ -8,11 +8,11 @@
  * wifi client
  **********************************************/
 #ifdef pueblo
-  const char* ssid = "otra_SSID";
-  const char* password = "otra_password_wifi"; 
+  const char* ssid = "FX-991SP";
+  const char* password = "Doniga_93"; 
 #else
-  const char* ssid = "tu_SSID";
-  const char* password = "tu_password_WiFi"; 
+  const char* ssid = "router_no_encontrado";
+  const char* password = "RoloTomasi8086"; 
 #endif
 
 String IPasignada ="255.255.255.255";
@@ -22,7 +22,7 @@ String IPasignada ="255.255.255.255";
  **********************************************/
 #define HOSTNAME "Monitir_de_red_01"
 //the password for OTA upgrade, can set it in any char you want
-#define PASSWORD "tu_password_OTA" 
+#define PASSWORD "Enrique8" 
 /*************************************************
  * Por si se quiere usar una IP estática  
  *************************************************/

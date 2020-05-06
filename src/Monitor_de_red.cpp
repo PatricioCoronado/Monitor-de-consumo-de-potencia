@@ -89,6 +89,8 @@ unsigned int ContadorFracasos=0;
 SegaSCPI segaScpi(Raiz,"Monitor de red",misErrores);//Instanciamos el objeto SCPI	global
 PZEM004Tv30 pzem(&Serial2);//Serial2 at pins IO-16 (RX2) and IO-17 (TX2)
 char web[256]; //URL para enviar el GET
+char origen[]="Nevera_Madrid";
+float pila=-1.0; //En este caso no procede pero lo ponemos por compatibilidad
 /**********************************************************************
  					setup
 **********************************************************************/
@@ -100,7 +102,9 @@ void setup()
   //Puerto bluetooth para depuración
   Serial1.begin(115200, SERIAL_8N1, 22, 23);//RXD2 pin 22,TXD2 pin 23
   //Inicializa WiFi y OTA
+  debug("conecta wifi \n\r");
   setupWIFI();//Conecta a la WiFi
+  debug("activa OTA \n\r");
   setupOTA();//Para flasear por OTA
   TiempoActual=TiempoAnterior=0;
   Timer=VALOR_TIMER;
@@ -117,7 +121,7 @@ void loop()
   // Si ha transcurrido el tiempo "Timer" lee datos y los envía a la base de da
   if(((TiempoActual-TiempoAnterior) > Timer) && ProcesoActivado)
   {
-    debug("cominezo....\n");
+    debug("comineza el proceso de lectura y envio a la base de datos\n\r");
     lee_potencia();
     escribe_base_de_datos();
     TiempoAnterior=millis();
@@ -129,6 +133,7 @@ void loop()
 *****************************************************************/
 void scpi_envia_datos(void)
 {
+  debug("enviando datos por el serial \n\r");
   voltage = pzem.voltage();
   if(isnan(voltage)) {voltage=-1;}
   current = pzem.current();
@@ -144,7 +149,7 @@ void scpi_envia_datos(void)
   if(voltage==-1 || current==-1 || power==-1 || energy==-1 || frequency==-1 || pfactor==-1)
   puerto->println("DAT error en la lectura");
   else
-  puerto->printf("DAT voltaje=%.1f corriente=%.2f potencia=%.2f energia=%.2f frecuencia=%.1f factor de portencia=%.3f\r\n\n",voltage,current,power,energy,frequency,pfactor);
+  puerto->printf("DAT voltaje=%.1f corriente=%.2f potencia=%.2f energia=%.2f frecuencia=%.1f factor de portencia=%.3f\n\n\r",voltage,current,power,energy,frequency,pfactor);
  }
   /************************************************************************
     funcion scpi: Cambia el tiempo de envío de datos a la base de datos
@@ -153,6 +158,7 @@ void scpi_envia_datos(void)
   void scpi_cambia_timer(void)
   {
       int timer;
+      debug("cambio el valor del timer \n\r");
       timer=Timer/1000;//Pasa a segundos
       segaScpi.actualizaVarEntera(&timer,TIMER_MAX,TIMER_MIN);//timer es en segundos
       Timer=timer*1000;//Pasa a milisegundos
@@ -162,11 +168,13 @@ void scpi_envia_datos(void)
  *************************************************************************/
 void scpi_depuracion_off(void) 
 {
+  debug("cambio depuracion off \n\r");
   if(segaScpi.FinComando[0]=='?'){puerto->println(depuracion);}
   else {depuracion=false;}
 }
 void scpi_depuracion_on(void) 
 {
+  debug("cambio depuracion on \n\r");
   if(segaScpi.FinComando[0]=='?'){puerto->println(depuracion);}
    else {depuracion=true;}
 }
@@ -175,11 +183,13 @@ void scpi_depuracion_on(void)
  *************************************************************************/
 void scpi_activa_proceso(void) 
 {
+  debug("activa proceso de lectura y envio de datos web \n\r");
   if(segaScpi.FinComando[0]=='?'){puerto->println(ProcesoActivado);}
   else {ProcesoActivado=true;}
 }
 void scpi_desactiva_proceso(void)
 {
+  debug("desactiva proceso de lectura y envio de datos web \n\r");
   if(segaScpi.FinComando[0]=='?'){puerto->println(ProcesoActivado);}
   else{ProcesoActivado=false;}
 }
@@ -221,6 +231,7 @@ void clsSCPI(void){segaScpi.errorscpi(-1);}
  *************************************************************************/
 void scpi_reset(void)
 {
+  debug("sistema reseteado \n\r");
   ESP.restart();
 }
 /*************************************************************************
@@ -229,13 +240,15 @@ void scpi_reset(void)
  *************************************************************************/
 void scpi_contadores(void)
 {
-  puerto->printf("Exitos=%u \rFracasos=%u\r\n",ContadorExitos,ContadorFracasos);
+  debug("contador de exitos y fracasos \n\r");
+  puerto->printf("Exitos=%u \rFracasos=%u\n\r",ContadorExitos,ContadorFracasos);
 }
 /*************************************************************************
     Función que lee la potencia del sensor
 *************************************************************************/
 void lee_potencia(void)
 {
+  debug("lee potencia \n\r");
   power = pzem.power();
   if(isnan(power)){power=-1;}
 }
@@ -245,38 +258,40 @@ void lee_potencia(void)
 void escribe_base_de_datos(void)
 {
   int httpCode;
+  debug("envia datos a la base de datos \n\r");
   digitalWrite(LED_BUILTIN,HIGH);
   if(WiFi.status() == WL_CONNECTED)
   {
     HTTPClient http; //
     //URL de entrada a la base de datos
-    sprintf(web,"http://192.168.1.102/potencia.php/?valor1=%.1f",power);//Rellena el string "web"
-    debug("%s\r\n",web);
-    debug("...enviando la solicitud al servidor.....\r\n");
+    //sprintf(web,"http://192.168.1.102/potencia.php/?valor1=%.1f",power);//Rellena el string "web"
+    sprintf(web,"http://192.168.1.102/potenciaw.php/?potencia=%.1f&pila=%.2f&origen=%s",power,pila,origen);
+    debug("%s\n\r",web);
+    debug("...enviando la solicitud al servidor.....\n\r");
     http.begin(web); //inicia la conexión
     httpCode = http.GET();//Envía dato. HttpCode es el código recibido desde el servidos
-    debug("httpCode=%u\r\n",httpCode);
+    debug("httpCode=%u\n\r",httpCode);
     //Aqui se gestina la recepción de la página solicitada
     if(httpCode > 0 ) //Si conecta correctamente
     {
-      debug("exito en el intento de conexion con la URL!\r\n");
+      debug("exito en el intento de conexion con la URL!\n\r");
       if(httpCode == HTTP_CODE_OK) 
         {//Si recibe una página...
             String payload = http.getString(); //payload contendrá #OK
             //debug.println(payload);
             if (payload.indexOf("#OK")!=-1) 
             {
-              debug("#0K\r\n");ContadorExitos++;
+              debug("#0K\n\r");ContadorExitos++;
             }
             else 
             {
-              debug("#ERROR\r\n");ContadorFracasos++;
+              debug("#ERROR\n\r");ContadorFracasos++;
             }
         }
     }
     else 
     {
-      debug("fallo el intento de conexion con la URL!\r\n");
+      debug("fallo el intento de conexion con la URL!\n\r");
       ContadorFracasos++;
     }
     http.end();//Cierra la conexión
@@ -284,8 +299,9 @@ void escribe_base_de_datos(void)
   else 
   {
     scpi_reset();
-    debug("se ha ejecutado un reset\r por desconexión del WiFi!\r\n");
+    debug("se ha ejecutado un reset\r por desconexión del WiFi!\n\r");
   }
   digitalWrite(LED_BUILTIN ,LOW);
+  debug("fin envia datos a la base de datos \n\r");
 }
 /*******************************FIN***************************************/
