@@ -43,9 +43,13 @@ void scpi_desactiva_proceso(void);
 void scpi_escribe_BD(void);
 void scpi_reset(void);
 void scpi_contadores(void);
+void scpi_post(void);
+void scpi_get(void);
 MENU_SCPI  //menú de  comandos y submenús OBLIGATORIO
 {
-	SCPI_COMANDO(TIMER,TI,scpi_cambia_timer) //Envía la IP actual
+	SCPI_COMANDO(GET,GET,scpi_get) //Envía con post
+  SCPI_COMANDO(POST,POST,scpi_post) //Envía con post
+  SCPI_COMANDO(TIMER,TI,scpi_cambia_timer) //Envía la IP actual
   SCPI_COMANDO(IP,IP,scpi_envia_IP) //Envía la IP actual
 	SCPI_COMANDO(DATOSRED,DR,scpi_envia_datos) //Comando que ejecuta la función funcion2
   SCPI_COMANDO(DEPURACIONON,DON,scpi_depuracion_on) //Pone a true la depuración
@@ -86,11 +90,13 @@ bool depuracion=true;
 bool ProcesoActivado=true;
 unsigned int ContadorExitos=0;
 unsigned int ContadorFracasos=0;
-SegaSCPI segaScpi(Raiz,"Monitor de red",misErrores);//Instanciamos el objeto SCPI	global
+SegaSCPI segaScpi(Raiz,"Monitor de red con POST",misErrores);//Instanciamos el objeto SCPI	global
 PZEM004Tv30 pzem(&Serial2);//Serial2 at pins IO-16 (RX2) and IO-17 (TX2)
 char web[256]; //URL para enviar el GET
+char DatosPost[256];
 char origen[]="Nevera_Madrid";
 float pila=-1.0; //En este caso no procede pero lo ponemos por compatibilidad
+int Post=1;
 /**********************************************************************
  					setup
 **********************************************************************/
@@ -119,14 +125,23 @@ void loop()
   ArduinoOTA.handle();//Ejecuta OTA
   TiempoActual = millis();
   // Si ha transcurrido el tiempo "Timer" lee datos y los envía a la base de da
-  if(((TiempoActual-TiempoAnterior) > Timer) && ProcesoActivado)
+  if(((TiempoActual-TiempoAnterior) > Timer))
   {
-    debug("comineza el proceso de lectura y envio a la base de datos\n\r");
-    lee_potencia();
-    escribe_base_de_datos();
+      if(ProcesoActivado)
+      {
+        debug("comineza el proceso de lectura y envio a la base de datos\n\r");
+        lee_potencia();
+        if(power !=-1) escribe_base_de_datos();//Si se lee la potencia sin error envía a la base de datos
+      }
+      else debug("Proceso inactivo\n\r");
     TiempoAnterior=millis();
   }
 }
+/****************************************************************
+	funcion scpi: cambia para enviar con Post 1 o Get 0
+*****************************************************************/
+void scpi_post(void){Post=1;}
+void scpi_get(void){Post=0;}
 /****************************************************************
 	funcion scpi: para leer todos los datos del sensor y enviarlos
   por el puerto serie
@@ -262,14 +277,37 @@ void escribe_base_de_datos(void)
   digitalWrite(LED_BUILTIN,HIGH);
   if(WiFi.status() == WL_CONNECTED)
   {
+    WiFiClient client;
     HTTPClient http; //
-    //URL de entrada a la base de datos
-    //sprintf(web,"http://192.168.1.102/potencia.php/?valor1=%.1f",power);//Rellena el string "web"
-    sprintf(web,"http://192.168.1.102/potenciaw.php/?potencia=%.1f&pila=%.2f&origen=%s",power,pila,origen);
-    debug("%s\n\r",web);
-    debug("...enviando la solicitud al servidor.....\n\r");
-    http.begin(web); //inicia la conexión
-    httpCode = http.GET();//Envía dato. HttpCode es el código recibido desde el servidos
+    if(Post)
+    {
+      sprintf(DatosPost,"origen=%s&potencia=%f&pila=%f",origen, power,pila);
+      sprintf(web,"http://192.168.1.102/potenciap.php");
+      http.begin(client,web); //HTTP
+      http.addHeader("Content-Type", "application/x-www-form-urlencoded"); //Preparamos el header
+      debug("%s\n\r",web);
+      delay(100);
+      debug("...enviando la solicitud al servidor.....\n\r");
+      delay(100);
+      debug("enviando con post\n\r");
+      delay(100);
+      httpCode = http.POST(DatosPost);   //Enviamos el post 
+      
+    }
+    else
+    {
+      sprintf(web,"http://192.168.1.102/potenciaw.php/?potencia=%.1f&pila=%.2f&origen=%s",power,pila,origen);
+      http.begin(web); //inicia la conexión
+      debug("%s\n\r",web);
+      delay(100);
+      debug("...enviando la solicitud al servidor.....\n\r");
+      delay(100);
+      debug("enviando con get\n\r");
+      delay(100);
+      httpCode = http.GET();//Envía dato. HttpCode es el código recibido desde el servidos
+    }
+      
+    
     debug("httpCode=%u\n\r",httpCode);
     //Aqui se gestina la recepción de la página solicitada
     if(httpCode > 0 ) //Si conecta correctamente
@@ -278,7 +316,7 @@ void escribe_base_de_datos(void)
       if(httpCode == HTTP_CODE_OK) 
         {//Si recibe una página...
             String payload = http.getString(); //payload contendrá #OK
-            //debug.println(payload);
+            //debug(payload);debug("\n\r");
             if (payload.indexOf("#OK")!=-1) 
             {
               debug("#0K\n\r");ContadorExitos++;
