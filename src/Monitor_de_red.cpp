@@ -282,7 +282,7 @@ void escribe_base_de_datos(void)
     if(Post)
     {
       sprintf(DatosPost,"origen=%s&potencia=%f&pila=%f",origen, power,pila);
-      sprintf(web,"http://192.168.1.102/potenciap.php");
+      sprintf(web,"URL");
       http.begin(client,web); //HTTP
       http.addHeader("Content-Type", "application/x-www-form-urlencoded"); //Preparamos el header
       debug("%s\n\r",web);
@@ -296,7 +296,7 @@ void escribe_base_de_datos(void)
     }
     else
     {
-      sprintf(web,"http://192.168.1.102/potenciaw.php/?potencia=%.1f&pila=%.2f&origen=%s",power,pila,origen);
+      sprintf(web,"URL/?potencia=%.1f&pila=%.2f&origen=%s",power,pila,origen);
       http.begin(web); //inicia la conexión
       debug("%s\n\r",web);
       delay(100);
