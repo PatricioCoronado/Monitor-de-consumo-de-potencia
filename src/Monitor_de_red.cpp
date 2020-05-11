@@ -10,6 +10,9 @@
  * Los datos se envian a una base de datos en una Raspberry pi 
  * En la red local.
   *********************************************************************/
+//
+#define CON_BLUETOOTH 1 //Descomentar para flasear la placa con Bluetooth
+//
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 #include <WiFi.h>
@@ -19,6 +22,7 @@
 #include "SegaSCPI.h"
 #include "WiFi_OTA.h"
 #include "PZEM004Tv30.h"
+#include "DHTesp.h"//Sensor de humedad temperatura DHT22
 /**********************************************************************
   Prototipos de funciones
 ***********************************************************************/
@@ -45,9 +49,12 @@ void scpi_reset(void);
 void scpi_contadores(void);
 void scpi_post(void);
 void scpi_get(void);
+void scpi_temperatura(void);
+//
 MENU_SCPI  //menú de  comandos y submenús OBLIGATORIO
 {
-	SCPI_COMANDO(GET,GET,scpi_get) //Envía con post
+	SCPI_COMANDO(TEMPERAURA,TEM,scpi_temperatura)
+  SCPI_COMANDO(GET,GET,scpi_get) //Envía con post
   SCPI_COMANDO(POST,POST,scpi_post) //Envía con post
   SCPI_COMANDO(TIMER,TI,scpi_cambia_timer) //Envía la IP actual
   SCPI_COMANDO(IP,IP,scpi_envia_IP) //Envía la IP actual
@@ -73,10 +80,15 @@ String misErrores[]=
 	"8 mi error 8",
 };
 /**********************************************************************
-    Defines y constantes
+    Defines, constantes y macros
 ***********************************************************************/
 #define LED_BUILTIN 2
-#define debug if(depuracion)Serial1.printf 
+#define SEN_DATA 15
+#ifdef CON_BLUETOOTH
+  #define debug if(depuracion)Serial1.printf 
+#else
+  #define debug if(depuracion)Serial.printf 
+#endif
 #define puerto segaScpi.PuertoActual //Para referirse al puerto scpi
 /**********************************************************************
     Variables globales
@@ -85,7 +97,7 @@ int Timer,TiempoActual,TiempoAnterior; //en milisegundos
 #define TIMER_MAX 300 
 #define TIMER_MIN 10 //Mínimo 10 segundos
 #define VALOR_TIMER 30000
-float voltage,current,power,energy,frequency,pfactor;
+float Potencia;
 bool depuracion=true;
 bool ProcesoActivado=true;
 unsigned int ContadorExitos=0;
@@ -94,9 +106,16 @@ SegaSCPI segaScpi(Raiz,"Monitor de red con POST",misErrores);//Instanciamos el o
 PZEM004Tv30 pzem(&Serial2);//Serial2 at pins IO-16 (RX2) and IO-17 (TX2)
 char web[256]; //URL para enviar el GET
 char DatosPost[256];
-char origen[]="Nevera_Madrid";
-float pila=-1.0; //En este caso no procede pero lo ponemos por compatibilidad
+char Origen[]="Nevera_Madrid";
+float Pila=-1.0; //En este caso no procede pero lo ponemos por compatibilidad
 int Post=1;
+//DHT dht(SEN_DATA, DHT22);
+DHTesp Sensor; //Instancia el sensor
+#define DHTTYPE DHT22  // DHT 22 (AM2302)
+#define DHTPIN   15    // Pin which is connected to the DHT sensor.
+TempAndHumidity Datos; // estructura donde se leen los datos del sensor
+float Temperatura;
+float Humedad;
 /**********************************************************************
  					setup
 **********************************************************************/
@@ -114,6 +133,7 @@ void setup()
   setupOTA();//Para flasear por OTA
   TiempoActual=TiempoAnterior=0;
   Timer=VALOR_TIMER;
+  Sensor.setup(DHTPIN,DHTesp::DHT22);//Inicializa el sensor
 }
 void loop() 
 {
@@ -130,11 +150,39 @@ void loop()
       if(ProcesoActivado)
       {
         debug("comineza el proceso de lectura y envio a la base de datos\n\r");
+        scpi_temperatura();
         lee_potencia();
-        if(power !=-1) escribe_base_de_datos();//Si se lee la potencia sin error envía a la base de datos
+        if(Potencia !=-1) escribe_base_de_datos();//Si se lee la potencia sin error envía a la base de datos
       }
       else debug("Proceso inactivo\n\r");
     TiempoAnterior=millis();
+  }
+}
+/****************************************************************
+	funcion scpi: lee la temperatura
+*****************************************************************/
+/*************************************************************
+		funcion que lee el sensor DHT22
+**************************************************************/
+void scpi_temperatura(void)
+{
+	debug("lectura de la temperatura y humedad\r\n");
+  Datos = Sensor.getTempAndHumidity();
+	delay(100);
+	// Check if any reads failed and exit early (to try again).
+	if (Sensor.getStatus() != 0) 
+	{
+      //String(Sensor.getStatusString()
+      puerto->printf("error de status en el sensor de temperatura-humedad\r\n");
+		  return;
+	}
+	else 
+  {
+    Humedad = Datos.humidity;
+    Temperatura = Datos.temperature;
+
+    //char datos[64];
+    puerto->printf("Temperatura = %f\r\nHumedad = %f\r\n",Temperatura,Humedad);
   }
 }
 /****************************************************************
@@ -149,6 +197,7 @@ void scpi_get(void){Post=0;}
 void scpi_envia_datos(void)
 {
   debug("enviando datos por el serial \n\r");
+  float voltage,current,power,energy,frequency,pfactor;
   voltage = pzem.voltage();
   if(isnan(voltage)) {voltage=-1;}
   current = pzem.current();
@@ -162,7 +211,7 @@ void scpi_envia_datos(void)
   pfactor = pzem.pf();
   if(isnan(pfactor)){pfactor=-1;}
   if(voltage==-1 || current==-1 || power==-1 || energy==-1 || frequency==-1 || pfactor==-1)
-  puerto->println("DAT error en la lectura");
+  puerto->printf("DAT error en la lectura\r\n");
   else
   puerto->printf("DAT voltaje=%.1f corriente=%.2f potencia=%.2f energia=%.2f frecuencia=%.1f factor de portencia=%.3f\n\n\r",voltage,current,power,energy,frequency,pfactor);
  }
@@ -173,6 +222,11 @@ void scpi_envia_datos(void)
   void scpi_cambia_timer(void)
   {
       int timer;
+      if(segaScpi.FinComando[0]=='?')
+      {
+        puerto->printf("Timer = %u segundos",Timer/1000);
+        return;
+      }
       debug("cambio el valor del timer \n\r");
       timer=Timer/1000;//Pasa a segundos
       segaScpi.actualizaVarEntera(&timer,TIMER_MAX,TIMER_MIN);//timer es en segundos
@@ -237,7 +291,7 @@ void idnSCPI(void){segaScpi.enviarNombreDelSistema();}
 void opcSCPI(void){	segaScpi.PuertoActual->println("1");}
 /*************************************************************************
     Comando: CLS
-    Limpia la pila de errores de SEGAINVEX-SCPI
+    Limpia la Pila de errores de SEGAINVEX-SCPI
  *************************************************************************/
 void clsSCPI(void){segaScpi.errorscpi(-1);}
 /*************************************************************************
@@ -256,7 +310,7 @@ void scpi_reset(void)
 void scpi_contadores(void)
 {
   debug("contador de exitos y fracasos \n\r");
-  puerto->printf("Exitos=%u \rFracasos=%u\n\r",ContadorExitos,ContadorFracasos);
+  puerto->printf("Exitos=%u \r\nFracasos=%u\n\r",ContadorExitos,ContadorFracasos);
 }
 /*************************************************************************
     Función que lee la potencia del sensor
@@ -264,25 +318,27 @@ void scpi_contadores(void)
 void lee_potencia(void)
 {
   debug("lee potencia \n\r");
-  power = pzem.power();
-  if(isnan(power)){power=-1;}
+  Potencia = pzem.power();
+  if(isnan(Potencia)){Potencia=-1;}
 }
 /*************************************************************************
     Función que pone datos en la base de datos
 *************************************************************************/
 void escribe_base_de_datos(void)
 {
+  static int ContadorDesconexiones=0;
   int httpCode;
   debug("envia datos a la base de datos \n\r");
   digitalWrite(LED_BUILTIN,HIGH);
   if(WiFi.status() == WL_CONNECTED)
   {
+    ContadorDesconexiones=0;//Reset del contador de desconexiones
     WiFiClient client;
     HTTPClient http; //
     if(Post)
     {
-      sprintf(DatosPost,"origen=%s&potencia=%f&pila=%f",origen, power,pila);
-      sprintf(web,"URL");
+      sprintf(DatosPost,"origen=%s&potencia=%f&pila=%f&temperatura=%f&humedad=%f",Origen, Potencia,Pila,Temperatura,Humedad);
+      sprintf(web,"http://192.168.1.102/potenciap.php");
       http.begin(client,web); //HTTP
       http.addHeader("Content-Type", "application/x-www-form-urlencoded"); //Preparamos el header
       debug("%s\n\r",web);
@@ -292,18 +348,16 @@ void escribe_base_de_datos(void)
       debug("enviando con post\n\r");
       delay(100);
       httpCode = http.POST(DatosPost);   //Enviamos el post 
-      
     }
     else
     {
-      sprintf(web,"URL/?potencia=%.1f&pila=%.2f&origen=%s",power,pila,origen);
+      sprintf(web,"http://192.168.1.102/potenciaw.php/?potencia=%.1f&pila=%.2f&Origen=%s",Potencia,Pila,Origen);
       http.begin(web); //inicia la conexión
       debug("%s\n\r",web);
       delay(100);
       debug("...enviando la solicitud al servidor.....\n\r");
       delay(100);
       debug("enviando con get\n\r");
-      delay(100);
       httpCode = http.GET();//Envía dato. HttpCode es el código recibido desde el servidos
     }
       
@@ -336,8 +390,15 @@ void escribe_base_de_datos(void)
   }
   else 
   {
-    scpi_reset();
-    debug("se ha ejecutado un reset\r por desconexión del WiFi!\n\r");
+    debug("se ha desconectado la WiFi. Conecta de nuevo\n\r");
+    setupWIFI();//Conecta a la WiFi
+    debug("activa OTA \n\r");
+    setupOTA();//Para flasear por OTA
+    if(++ContadorDesconexiones>3)
+    {
+      debug("se ha ejecutado un reset\r por desconexiones de la wifi del WiFi!\n\r");
+      scpi_reset();
+    }
   }
   digitalWrite(LED_BUILTIN ,LOW);
   debug("fin envia datos a la base de datos \n\r");

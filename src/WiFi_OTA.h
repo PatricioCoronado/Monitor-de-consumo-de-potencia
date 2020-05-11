@@ -9,10 +9,10 @@
  **********************************************/
 #ifdef pueblo
   const char* ssid = "SSID1";
-  const char* password = "password1"; 
+  const char* password = "wifiPassword1"; 
 #else
   const char* ssid = "SSID2";
-  const char* password = "password2"; 
+  const char* password = "wifiPassword2"; 
 #endif
 
 String IPasignada ="255.255.255.255";
