@@ -13,10 +13,9 @@ Patricio Coronado Collado abril 2020
 ## 
  Lee la temperatura mediante un DHT22.
 ## 
- Conecta con una base de datos instalada en una Raspberry Pi
-	y le pone datos mediante POST . Se incluyen las APIs en php
-	utilizadas. Se puede ver una gráfica del consumo de potencia
-	y temperatura.
+ Conecta por WiFi con una base de datos en una LAN instalada en una Raspberry Pi
+y le pone datos mediante POST . Se incluyen las APIs en php utilizadas. Se muestra 
+una gráfica del consumo de potencia y temperatura.
 ## 
 # DEPENDENCIAS
 Librerias Arduino (incluidas en el proyecto):
