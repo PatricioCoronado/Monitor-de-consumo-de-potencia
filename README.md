@@ -15,10 +15,9 @@ Patricio Coronado Collado abril 2020
 ## 
  Conecta por WiFi con una base de datos en una LAN instalada en una Raspberry Pi
 y le pone datos mediante POST .Se muestra una gráfica del consumo de potencia y temperatura.
-##.
+## 
 Se incluyen las APIs en php, el fichero potenciap.php recibe cuando se envia con POST y
 el fichero potenciaw.php recibe cuando se envía con GET.
-
 ## 
 # DEPENDENCIAS
 Librerias Arduino (incluidas en el proyecto):
