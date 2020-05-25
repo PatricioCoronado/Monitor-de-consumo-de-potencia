@@ -5,7 +5,6 @@ Patricio Coronado Collado abril 2020
  https://www.espressif.com/en/products/socs/esp32/overview 
 ## 
  Se utiliza la posibilidad ofrecida por este dispositivo
-## 
  de programarlo por OTA (mediante WiFi).
 ## 
  Se conecta al PC mediante el módulo HC-05 Bluetooth.
