@@ -16,6 +16,7 @@ Patricio Coronado Collado abril 2020
 Librerias Arduino (incluidas en el proyecto):
 DHTesp, HTTPClientESP32,PZEM-004T-v30-master,SegaSCPI
 #
+![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto0.png "Optional title")
 ![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto7.png "Optional title")
 ![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto8.png "Optional title")
 ![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto3.png "Optional title")
