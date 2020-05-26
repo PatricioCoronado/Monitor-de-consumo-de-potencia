@@ -30,11 +30,11 @@ Programación OTA Util para programar el dispositivo sin acceder a el fisicament
 Envío de variable cliente-servidor HTTP mediante POST. Mas seguro que con GET.
 ![POST y GET](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/POST_GET.png "post y get")
 ![phpMyAdmin](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto6.png "phpMyAdmin en Raspberry Pi")
+![Grafica](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto0.png "gráfica de consumo")
 ## 
 Uso de base de datos MariaDB sobre Raspberry Pi en LAN (Intentar sobre WAN en futuras versinones)
 ![MariaDB](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/MariaDB.png "MariaDB y Raspberry Pi")
 ![Code](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/code.png "Visual Studio Code")
-![Grafica](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto0.png "gráfica de consumo")
 ## 
 # IMAGENES DEL HARDWARE
 ![Placa ESP32](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto7.png "placa de desarrollo")
