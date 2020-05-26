@@ -28,7 +28,7 @@ Envío de variable cliente-servidor HTTP mediante POST. Mas seguro que con GET.
 ## 
 Uso de base de datos MariaDB sobre Raspberry Pi en LAN (Intentar sobre WAN en futuras versinones)
 ![MariaDB](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/MariaDB.png "MariaDB y Raspberry Pi")
-![Code](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/Code.png "Visual Studio Code")
+![Code](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/code.png "Visual Studio Code")
 ## 
 # DEPENDENCIAS
 Librerias Arduino (incluidas en el proyecto):
