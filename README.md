@@ -3,6 +3,7 @@ Patricio Coronado Collado abril 2020
  Proyecto realizado para probar la capacidad del ESP32 de Espressif
 ## 
  https://www.espressif.com/en/products/socs/esp32/overview 
+![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto8.png "ESP32")
 ## 
  Se utiliza la posibilidad ofrecida por este dispositivo
  de programarlo por OTA (mediante WiFi).
@@ -28,16 +29,15 @@ Programación OTA Util para programar el dispositivo sin acceder a el fisicament
 ## 
 Envío de variable cliente-servidor HTTP mediante POST. Mas seguro que con GET.
 ![POST y GET](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/POST_GET.png "post y get")
+![phpMyAdmin](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto6.png "phpMyAdmin en Raspberry Pi")
 ## 
 Uso de base de datos MariaDB sobre Raspberry Pi en LAN (Intentar sobre WAN en futuras versinones)
 ![MariaDB](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/MariaDB.png "MariaDB y Raspberry Pi")
 ![Code](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/code.png "Visual Studio Code")
+![Grafica](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto0.png "gráfica de consumo")
 ## 
 # IMAGENES DEL HARDWARE
-![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto0.png "perfil de consumo")
-![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto7.png "placa de desarrollo")
-![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto8.png "ESP32")
-![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto3.png "placa con HC-05")
-![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto4.png "sensado de corriente")
-![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto5.png "sistema completo")
-![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto6.png "phpMyAdmin en Raspberry Pi")
+![Placa ESP32](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto7.png "placa de desarrollo")
+![Bluetooth](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto3.png "placa con HC-05")
+![Bobina sensora](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto4.png "sensado de corriente")
+![Sistema](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto5.png "sistema completo")
