@@ -19,6 +19,9 @@ y le pone datos mediante POST .Se muestra una gráfica del consumo de potencia y
 Se incluyen las APIs en php, el fichero potenciap.php recibe cuando se envia con POST y
 el fichero potenciaw.php recibe cuando se envía con GET.
 ## 
+# DEPENDENCIAS
+Librerias Arduino (incluidas en el proyecto):
+DHTesp, HTTPClientESP32,PZEM-004T-v30-master,SegaSCPI.
 # NUEVAS COMPETENCIAS
 Programación OTA Util para programar el dispositivo sin acceder a el fisicamente.
 ![OTA](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/OTA.png "OTA")
@@ -30,10 +33,7 @@ Uso de base de datos MariaDB sobre Raspberry Pi en LAN (Intentar sobre WAN en fu
 ![MariaDB](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/MariaDB.png "MariaDB y Raspberry Pi")
 ![Code](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/code.png "Visual Studio Code")
 ## 
-# DEPENDENCIAS
-Librerias Arduino (incluidas en el proyecto):
-DHTesp, HTTPClientESP32,PZEM-004T-v30-master,SegaSCPI
-#
+# IMAGENES DEL HARDWARE
 ![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto0.png "perfil de consumo")
 ![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto7.png "placa de desarrollo")
 ![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto8.png "ESP32")
