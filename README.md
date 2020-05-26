@@ -1,8 +1,6 @@
 ** ** Patricio Coronado Collado abril 2020
 # DESCRIPCIÓN
- Proyecto realizado para probar la capacidad del ESP32 de Espressif
-## 
- https://www.espressif.com/en/products/socs/esp32/overview 
+ Proyecto realizado para probar la capacidad del [ESP32 de Espressif](https://www.espressif.com/en/products/socs/esp32/overview)
 ![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto8.png "ESP32")
 ## 
  Se utiliza la posibilidad ofrecida por este dispositivo
