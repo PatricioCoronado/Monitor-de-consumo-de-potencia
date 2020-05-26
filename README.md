@@ -11,8 +11,7 @@
 ## 
 # DEPENDENCIAS
 Librerias Arduino (incluidas en el proyecto):
-## DHTesp, HTTPClientESP32, PZEM-004T-v30-master.
-## [SegaSCPI](https://github.com/PatricioCoronado/SegaSCPI)
+## DHTesp, HTTPClientESP32, PZEM-004T-v30-master, [SegaSCPI](https://github.com/PatricioCoronado/SegaSCPI)
 ##
 # NUEVAS COMPETENCIAS
 **Programación de APIs en php. El fichero potenciap.php recibe cuando se envia con POST y el fichero potenciaw.php recibe cuando se envía con GET**
