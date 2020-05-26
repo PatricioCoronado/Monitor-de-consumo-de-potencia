@@ -1,4 +1,4 @@
-** ** Patricio Coronado Collado abril 2020
+** **Patricio Coronado Collado abril 2020** **
 # DESCRIPCIÓN
  Proyecto realizado para probar la capacidad del [ESP32 de Espressif](https://www.espressif.com/en/products/socs/esp32/overview)
 ![Alt text](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/foto8.png "ESP32")
@@ -12,7 +12,7 @@
 # DEPENDENCIAS
 Librerias Arduino (incluidas en el proyecto):
 ## DHTesp, HTTPClientESP32, PZEM-004T-v30-master.
-## SegaSCPI. https://github.com/PatricioCoronado/SegaSCPI
+## [SegaSCPI](https://github.com/PatricioCoronado/SegaSCPI)
 ##
 # NUEVAS COMPETENCIAS
 Programación de APIs en php. El fichero potenciap.php recibe cuando se envia con POST y el fichero potenciaw.php recibe cuando se envía con GET.
