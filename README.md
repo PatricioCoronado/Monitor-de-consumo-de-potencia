@@ -20,6 +20,7 @@ Librerias Arduino (incluidas en el proyecto):
 Programación de APIs en php. El fichero potenciap.php recibe cuando se envia con POST y el fichero potenciaw.php recibe cuando se envía con GET.
 ##
 ![API php](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/php.png "APIs")
+
 Programación OTA. Util para programar el dispositivo sin acceder a el fisicamente.
 ![OTA](https://github.com/PatricioCoronado/Monitor-de-consumo-de-potencia/blob/master/ficheros/OTA.png "OTA")
 ## 
